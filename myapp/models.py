@@ -8,7 +8,7 @@ from django.db import models
 
 class UpdownFile(models.Model):
     file = models.FileField(verbose_name='Uploaded file')
-    slug = models.CharField(max_length=9, verbose_name='Secret URL Part')
+    slug = models.CharField(max_length=36, verbose_name='Secret URL Part')
     password = models.CharField(max_length=255, verbose_name='Password', blank=True)
     max_downloads = models.PositiveSmallIntegerField(verbose_name='Maximum download Count', blank=True, null=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
@@ -20,14 +20,15 @@ class UpdownFile(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        if self.password is not '':
-            self.password = make_password(self.password)
 
         # new file
         if not self.pk:
             self.slug = str(uuid.uuid4())
+            if not self.password == '' and (not update_fields or 'password' in update_fields):
+                self.password = make_password(self.password)
 
-        super(UpdownFile, self).save()
+        super(UpdownFile, self).save(force_insert=force_insert, force_update=force_update, using=using,
+                                     update_fields=update_fields)
 
     @property
     def is_expired(self):

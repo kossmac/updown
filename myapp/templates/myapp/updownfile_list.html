@@ -22,8 +22,46 @@
 </section>
 <section class="section">
     <div class="container">
-        <form action="{% url 'add' %}" method="post" enctype="multipart/form-data">
-            {{ upload_form }}
+        <form action="{% url 'manage' %}" method="post" enctype="multipart/form-data">
+            <div class="field">
+                <label class="label">{{ form.password.label }}</label>
+                <div class="control">
+                    {{ form.password }}
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">{{ form.expires_at.label }}</label>
+                <div class="control">
+                    {{ form.expires_at }}
+                </div>
+            </div>
+            {% if user.is_superuser %}
+                <div class="field">
+                    <label class="label">{{ form.owner.label }}</label>
+                    <div class="control">
+                        <div class="select">
+                            <select required name="{{ form.owner.name }}" id="{{ form.owner.id_for_label }}">
+                                {% for id, owner in form.fields.owner.choices %}
+                                    <option value="{{ id }}">{{ owner }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="file is-boxed">
+                <label class="file-label">
+                    {{ form.file }}
+                    <span class="file-cta">
+                        <span class="file-icon">
+                        <i class="fas fa-upload"></i>
+                        </span>
+                        <span class="file-label">
+                        Choose a file…
+                        </span>
+                    </span>
+                </label>
+            </div>
             {% csrf_token %}
             <input type="submit" class="button" value="Submit" />
         </form>

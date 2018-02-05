@@ -1,18 +1,12 @@
-import os
-
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.hashers import check_password
-from django.core.exceptions import PermissionDenied
-from django.http import HttpResponse, Http404
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
+from django.http import FileResponse
+from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.utils.decorators import method_decorator
-from django.views.decorators.http import require_http_methods
-from django.views.defaults import bad_request
-from django.views.generic import ListView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import FormMixin, DeleteView, CreateView
+from django.views.generic.edit import FormMixin, DeleteView, UpdateView, CreateView
 
-from myapp.forms import DownloadForm, UploadForm
+from myapp.forms import DownloadForm, UploadForm, AdminUploadForm
 from myapp.models import UpdownFile
 
 
@@ -28,63 +22,67 @@ class UpdownFileDetailView(DetailView, FormMixin):
         return context_data
 
 
-class UpdownFileListView(ListView):
+class UpdownFileListView(LoginRequiredMixin, CreateView):
 
     model = UpdownFile
+    success_url = reverse_lazy('manage')
+    template_name = 'myapp/updownfile_list.html'
 
-    @method_decorator(login_required)
+    def get_form_class(self):
+        user = self.request.user
+
+        if user.is_superuser:
+            return AdminUploadForm
+
+        return UploadForm
+
     def dispatch(self, request, *args, **kwargs):
         return super(UpdownFileListView, self).dispatch(request, *args, **kwargs)
     
-    def get_queryset(self):
+    def get_fileset(self):
         if self.request.user.is_authenticated:
             return super(UpdownFileListView, self).get_queryset().filter(owner=self.request.user)
         else:
             return None
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(UpdownFileListView, self).get_context_data(**kwargs)
+    def form_valid(self, form):
+        file = form.save(commit=False)
+        user = self.request.user
+        if not user.is_superuser:
+            file.owner = user
 
-        context['upload_form'] = UploadForm
+        file.save()
 
-        return context
+        return super(UpdownFileListView, self).form_valid(form)
 
-
-class UpdownCreateView(CreateView):
-
-    model = UpdownFile
-    success_url = reverse_lazy('file-list')
-    form_class = UploadForm
+    def get_context_data(self, **kwargs):
+        return super(UpdownFileListView, self).get_context_data(updownfile_list=self.get_fileset(), **kwargs)
 
 
 class UpdownDeleteView(DeleteView):
 
     model = UpdownFile
-    success_url = reverse_lazy('file-list')
+    success_url = reverse_lazy('manage')
 
 
-@require_http_methods(['POST', 'GET'])
-def download(request, slug=None):
-    pass_protection = False
-    obj = UpdownFile.objects.get(slug=slug)
+class UpdownUpdateView(UpdateView):
 
-    if request.method == 'POST':
-        form = DownloadForm(request.POST)
-        form.full_clean()
-        pass_protection = check_password(form.cleaned_data['password'], obj.password)
+    model = UpdownFile
+    form_class = DownloadForm
 
-    if pass_protection or not obj.is_password_protected:
-        if not obj.is_expired:
-            if os.path.exists(obj.file.name):
-                if obj.max_downloads is not '':
-                    obj.max_downloads -= 1
-                    obj.save()
-                with open(obj.file.name, 'rb') as fh:
-                    response = HttpResponse(fh.read())
-                    response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(obj.file.name)
-                    return response
-            raise Http404
-        else:
-            raise PermissionDenied
-    else:
-        raise PermissionDenied
+    def form_valid(self, form):
+        response = FileResponse(self.object.file)
+        response['Content-Disposition'] = 'attachment; filename="%s"' % self.object.file
+        form.save()
+
+        return response
+
+    def form_invalid(self, form):
+        return render(self.request, 'myapp/updownfile_detail.html', context={
+            'form_errors': form.errors,
+            'updownfile': self.object,
+        }, status=410)
+
+
+class UserLoginView(LoginView):
+    template_name = 'admin/login.html'

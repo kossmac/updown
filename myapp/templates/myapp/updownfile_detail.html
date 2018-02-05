@@ -31,21 +31,19 @@
             {% if updownfile.is_expired %}
                 expired
             {% else %}
-                {% if updownfile.is_password_protected %}
-                    <form action="{% url "download" updownfile.slug %}" method="post">
-                        {% csrf_token %}
-                        <p class="control has-icons-left">
-                        {{ form.password }}
+                <form action="{% url "download" updownfile.slug %}" method="post">
+                    {% csrf_token %}
+                    {% if updownfile.is_password_protected %}
+                    <p class="control has-icons-left">
+                    {{ form.password }}
                         <span class="icon is-small is-left">
                           <i class="fas fa-lock"></i>
                         </span>
                         </p>
-                        {{ form.slug }}
-                        <input type="submit" class="button" value="Submit" />
-                    </form>
-                {% else %}
-                    <a href="{% url "download" updownfile.slug %}">download</a>
-                {% endif %}
+                    {% endif %}
+                    {{ form.slug }}
+                    <input type="submit" class="button" value="Submit" />
+                </form>
             {% endif %}
                 </div>
             </article>
