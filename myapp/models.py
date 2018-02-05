@@ -10,6 +10,7 @@ class UpdownFile(models.Model):
     file = models.FileField(verbose_name='Uploaded file')
     slug = models.CharField(max_length=9, verbose_name='Secret URL Part')
     password = models.CharField(max_length=255, verbose_name='Password', blank=True)
+    max_downloads = models.PositiveSmallIntegerField(verbose_name='Maximum download Count', blank=True, null=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     expires_at = models.DateField(verbose_name='Expiration date')
     created_at = models.DateTimeField(verbose_name='Creation date', auto_now_add=True)
@@ -30,7 +31,7 @@ class UpdownFile(models.Model):
 
     @property
     def is_expired(self):
-        return self.expires_at < datetime.date.today()
+        return any([self.expires_at < datetime.date.today(), self.max_downloads == 0])
 
     @property
     def is_password_protected(self):

@@ -3,8 +3,7 @@ import os
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponse, Http404, HttpResponseForbidden, HttpResponseGone
-from django.shortcuts import render_to_response
+from django.http import HttpResponse, Http404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_http_methods
@@ -77,12 +76,15 @@ def download(request, slug=None):
     if pass_protection or not obj.is_password_protected:
         if not obj.is_expired:
             if os.path.exists(obj.file.name):
+                if obj.max_downloads is not '':
+                    obj.max_downloads -= 1
+                    obj.save()
                 with open(obj.file.name, 'rb') as fh:
                     response = HttpResponse(fh.read())
                     response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(obj.file.name)
                     return response
             raise Http404
         else:
-            raise bad_request
+            raise PermissionDenied
     else:
         raise PermissionDenied
