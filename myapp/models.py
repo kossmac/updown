@@ -5,14 +5,17 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.db import models
 
+from updown import settings
+
 
 class UpdownFile(models.Model):
-    file = models.FileField(verbose_name='Uploaded file')
+    file = models.FileField(verbose_name='Uploaded file', upload_to=settings.UPLOAD_STORAGE)
     slug = models.CharField(max_length=36, verbose_name='Secret URL Part')
     password = models.CharField(max_length=255, verbose_name='Password', blank=True)
     max_downloads = models.PositiveSmallIntegerField(verbose_name='Maximum download Count', blank=True, null=True)
+    download_counter = models.PositiveIntegerField(verbose_name='Download counter', default=0, null=True, blank=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    expires_at = models.DateField(verbose_name='Expiration date')
+    expires_at = models.DateField(verbose_name='Expiration date', blank=True, null=True)
     created_at = models.DateTimeField(verbose_name='Creation date', auto_now_add=True)
 
     def __str__(self):
@@ -32,8 +35,16 @@ class UpdownFile(models.Model):
 
     @property
     def is_expired(self):
-        return any([self.expires_at < datetime.date.today(), self.max_downloads == 0])
+        if self.expires_at and self.expires_at < datetime.date.today():
+            return True
+
+        return self.remaining_downloads == 0
 
     @property
     def is_password_protected(self):
         return self.password is not ''
+
+    @property
+    def remaining_downloads(self):
+        if self.max_downloads:
+            return self.max_downloads - self.download_counter

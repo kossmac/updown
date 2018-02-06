@@ -33,10 +33,10 @@ class DownloadForm(forms.ModelForm):
         return password
 
     def save(self, commit=True):
-        self.instance.max_downloads -= 1
+        self.instance.download_counter += 1
 
         if commit:
-            self.instance.save(update_fields=['max_downloads'])
+            self.instance.save(update_fields=['download_counter'])
 
         return self.instance
 
