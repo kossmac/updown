@@ -18,13 +18,12 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 
-from updown.views import UpdownFileDetailView, UpdownUpdateView, UpdownFileListView, UpdownDeleteView, UserLoginView
+from updown.views import UpdownFileListView, UpdownDeleteView, UserLoginView, UpdownView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', UserLoginView.as_view(), name='login'),
-    path('request/<slug:slug>', UpdownFileDetailView.as_view(), name='request'),
-    path('download/<slug:slug>', UpdownUpdateView.as_view(), name='download'),
+    path('download/<slug:slug>', UpdownView.as_view(), name='download'),
     path('delete/<slug:slug>', UpdownDeleteView.as_view(), name='delete'),
     path('manage/', UpdownFileListView.as_view(), name='manage'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

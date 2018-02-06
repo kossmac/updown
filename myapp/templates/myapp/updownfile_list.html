@@ -80,7 +80,7 @@
                     <div class="media-content">
                         <div class="content">
                             <p>
-                                <strong><a href="{% url "request" updownfile.slug %}">{{ updownfile }}</a></strong> <small>@{{ updownfile.created_at }}</small> <small>({{ updownfile.owner.username }})</small>
+                                <strong><a href="{% url "download" updownfile.slug %}">{{ updownfile }}</a></strong> <small>@{{ updownfile.created_at }}</small> <small>({{ updownfile.owner.username }})</small>
                             </p>
                         </div>
                         <nav class="level is-mobile">

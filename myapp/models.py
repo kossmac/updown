@@ -42,7 +42,7 @@ class UpdownFile(models.Model):
 
     @property
     def is_password_protected(self):
-        return self.password is not ''
+        return bool(self.password)
 
     @property
     def remaining_downloads(self):

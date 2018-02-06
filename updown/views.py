@@ -1,25 +1,48 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
+from django.db import transaction
 from django.http import FileResponse
-from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic.detail import DetailView
-from django.views.generic.edit import FormMixin, DeleteView, UpdateView, CreateView
+from django.utils.decorators import method_decorator
+from django.views.generic.edit import DeleteView, UpdateView, CreateView
 
 from myapp.forms import DownloadForm, UploadForm, AdminUploadForm
 from myapp.models import UpdownFile
 
 
-class UpdownFileDetailView(DetailView, FormMixin):
-
+@method_decorator(transaction.atomic, 'dispatch')
+class UpdownView(UpdateView):
     model = UpdownFile
     form_class = DownloadForm
+    template_name = 'myapp/updownfile_form.html'
 
-    def get_context_data(self, **kwargs):
-        context_data = super(UpdownFileDetailView, self).get_context_data(**kwargs)
+    def get_queryset(self, **kwargs):
+        return super(UpdownView, self).get_queryset().select_for_update(**kwargs)
 
-        context_data['form'].initial = {'slug': self.object.slug}
-        return context_data
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        obj = form.save()
+
+        return self.file_response(obj)
+
+    def form_invalid(self, form):
+        if self.request.method == 'GET':
+            form.errors.pop('password', None)
+
+        if form.non_field_errors():
+            status = 410
+            return self.render_to_response(self.get_context_data(form=form, status=status), status=status)
+
+        return super(UpdownView, self).form_invalid(form)
+
+    @staticmethod
+    def file_response(obj: UpdownFile):
+        response = FileResponse(obj.file)
+        response['Content-Disposition'] = 'attachment; filename="%s"' % obj.file.name
+
+        return response
 
 
 class UpdownFileListView(LoginRequiredMixin, CreateView):
@@ -41,9 +64,6 @@ class UpdownFileListView(LoginRequiredMixin, CreateView):
             return AdminUploadForm
 
         return UploadForm
-
-    def dispatch(self, request, *args, **kwargs):
-        return super(UpdownFileListView, self).dispatch(request, *args, **kwargs)
     
     def get_fileset(self):
         if self.request.user.is_authenticated:
@@ -69,25 +89,6 @@ class UpdownDeleteView(DeleteView):
 
     model = UpdownFile
     success_url = reverse_lazy('manage')
-
-
-class UpdownUpdateView(UpdateView):
-
-    model = UpdownFile
-    form_class = DownloadForm
-
-    def form_valid(self, form):
-        response = FileResponse(self.object.file)
-        response['Content-Disposition'] = 'attachment; filename="%s"' % self.object.file
-        form.save()
-
-        return response
-
-    def form_invalid(self, form):
-        return render(self.request, 'myapp/updownfile_detail.html', context={
-            'form_errors': form.errors,
-            'updownfile': self.object,
-        }, status=410)
 
 
 class UserLoginView(LoginView):

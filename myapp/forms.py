@@ -8,27 +8,37 @@ from myapp.models import UpdownFile
 class DownloadForm(forms.ModelForm):
     class Meta:
         model = UpdownFile
-        fields = ('password', 'slug')
+        fields = ('password',)
         widgets = {
             'password': forms.PasswordInput(attrs={'class': 'input'}),
-            'slug': forms.HiddenInput(),
         }
+
+    def __init__(self, **kwargs):
+        # This form is used in GET requests. Set data to an empty dict
+        # so this form is always bound and could be validated.
+        kwargs['data'] = kwargs.get('data') or {}
+
+        super(DownloadForm, self).__init__(**kwargs)
 
     def clean(self):
         if self.instance.is_expired:
-            raise ValidationError('error')
+            raise ValidationError(
+                message='File %(name)s is expired.',
+                params=dict(name=self.instance.file.name),
+                code='expired',
+            )
 
         return self.cleaned_data
 
     def clean_password(self):
         password = self.cleaned_data['password']
-        if self.instance.is_password_protected:
-            valid = check_password(password, self.instance.password)
-        else:
-            valid = True
 
-        if not valid:
-            raise ValidationError('error')
+        if self.instance.is_password_protected:
+            if not check_password(password, self.instance.password):
+                raise ValidationError(
+                    message='Wrong Password!',
+                    code='wrong-password',
+                )
 
         return password
 
