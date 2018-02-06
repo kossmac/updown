@@ -42,7 +42,7 @@
                         <div class="select">
                             <select required name="{{ form.owner.name }}" id="{{ form.owner.id_for_label }}">
                                 {% for id, owner in form.fields.owner.choices %}
-                                    <option value="{{ id }}">{{ owner }}</option>
+                                    <option value="{{ id }}" {% if id == form.owner.initial %} selected {% endif %}>{{ owner }}</option>
                                 {% endfor %}
                             </select>
                         </div>

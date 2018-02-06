@@ -28,6 +28,12 @@ class UpdownFileListView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('manage')
     template_name = 'myapp/updownfile_list.html'
 
+    def get_initial(self):
+        initial = super(UpdownFileListView, self).get_initial()
+        initial.update({'owner': self.request.user.pk})
+
+        return initial
+
     def get_form_class(self):
         user = self.request.user
 
