@@ -39,7 +39,9 @@ class UpdownFile(models.Model):
             return True
 
         if self.max_downloads:
-            return self.remaining_downloads <= 0
+            return bool(self.remaining_downloads <= 0)
+
+        return False
 
     @property
     def can_expire(self):

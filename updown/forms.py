@@ -30,12 +30,13 @@ class DownloadForm(forms.ModelForm):
 
     def __init__(self, **kwargs):
         # This form is used in GET requests. Set data to an empty dict
-        # so this form is always bound and could be validated.
+        # so this form is always bound and can be validated.
         kwargs['data'] = kwargs.get('data') or {}
 
         super(DownloadForm, self).__init__(**kwargs)
 
     def clean(self):
+        # produces non_field_error, since is_expired is a property not an attribute of model
         if self.instance.is_expired:
             raise ValidationError(
                 message='File %(name)s is expired.',
@@ -46,6 +47,7 @@ class DownloadForm(forms.ModelForm):
         return self.cleaned_data
 
     def clean_password(self):
+        # check if given password is correct
         password = self.cleaned_data['password']
 
         if self.instance.is_password_protected:
@@ -58,8 +60,10 @@ class DownloadForm(forms.ModelForm):
         return password
 
     def save(self, commit=True):
+        # increase download counter
         self.instance.download_counter += 1
 
+        # but only if we commit the instance, see form_valid() of UpdownFileListView
         if commit:
             self.instance.save(update_fields=['download_counter'])
 
@@ -74,7 +78,8 @@ class UploadForm(forms.ModelForm):
 
 
 class AdminUploadForm(forms.ModelForm):
+    # superuser may upload files for different users
     class Meta:
-        model = UpdownFile
+        model = UploadForm.Meta.model
         fields = UploadForm.Meta.fields + ('owner',)
         widgets = UPLOAD_FORM_WIDGETS

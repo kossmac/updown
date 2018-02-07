@@ -20,7 +20,7 @@
             Manage
         </a>
         <a class="navbar-item" href="{% url "logout" %}">
-            Logout
+            Logout ({{ user }})
         </a>
 
         {% if user.is_superuser and form.fields.owner %}

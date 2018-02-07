@@ -8,7 +8,7 @@ class UpdownFileAdmin(admin.ModelAdmin):
     list_display = (
         'filename',
         'owner',
-        'max_downloads',
+        'max_downloads_display',
         'download_counter',
         'remaining_downloads',
         'expires_at',
@@ -59,7 +59,8 @@ class UpdownFileAdmin(admin.ModelAdmin):
 
     remaining_downloads.empty_value_display = '∞'
 
-    def max_downloads(self, obj):
+    def max_downloads_display(self, obj):
         return obj.max_downloads
 
-    max_downloads.empty_value_display = '∞'
+    max_downloads_display.short_description = 'max downloads'
+    max_downloads_display.empty_value_display = '∞'
