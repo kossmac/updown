@@ -114,5 +114,7 @@ venv.bak/
 
 node_modules/
 
-*.pdf
 *.sqlite3
+
+uploaded_files/*
+!uploaded_files/.keep

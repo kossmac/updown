@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('myapp', '0002_remove_updownfile_name'),
+        ('updown', '0002_remove_updownfile_name'),
     ]
 
     operations = [

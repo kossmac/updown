@@ -1,0 +1,133 @@
+{% extends "updown/base.html" %}
+
+{% block content %}
+
+<section class="section">
+    <div class="container">
+        <h1 class="title">
+            Manage files
+        </h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <h2 class="subtitle is-3">
+            Upload
+        </h2>
+        <div class="columns">
+            <div class="column is-half is-offset-one-quarter">
+                <form action="{% url 'list' %}" method="post" enctype="multipart/form-data">
+                    <div class="field">
+                        <div class="control">
+                            {{ form.password }}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            {{ form.expires_at }}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <label class="label">{{ form.max_downloads.label }}</label>
+                            {{ form.max_downloads }}
+                        </div>
+                    </div>
+                    {% if user.is_superuser %}
+                        <div class="field">
+                            <label class="label">{{ form.owner.label }}</label>
+                            <div class="control">
+                                <div class="select">
+                                    <select required name="{{ form.owner.name }}" id="{{ form.owner.id_for_label }}">
+                                        {% for id, owner in form.fields.owner.choices %}
+                                            <option value="{{ id }}" {% if id == form.owner.initial %} selected {% endif %}>{{ owner }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="file is-boxed">
+                        <label class="file-label">
+                            {{ form.file }}
+                            <span class="file-cta">
+                        <span class="file-icon">
+                        <i class="fas fa-upload"></i>
+                        </span>
+                        <span class="file-label">
+                        Choose a file…
+                        </span>
+                    </span>
+                        </label>
+                    </div>
+                    {% csrf_token %}
+                    <input type="submit" class="button" value="Submit" />
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <h2 class="subtitle is-3">
+            Download
+        </h2>
+        {% for updownfile in updownfile_list %}
+            <div class="box">
+                <article class="media">
+                    <div class="media-left">
+                        <figure class="image is-64x64">
+                            <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
+                        </figure>
+                    </div>
+                    <div class="media-content">
+                        <div class="content">
+                            <p>
+                                <strong>
+                                    {{ updownfile }}
+                                </strong>
+                                <small>@{{ updownfile.created_at }}</small>
+                                <small>({{ updownfile.owner.username }})</small>
+                            </p>
+                        </div>
+                        <nav class="level is-mobile">
+                            <div class="level-left">
+                                {% if not updownfile.is_expired %}
+                                <a class="level-item" href="{% url "download" updownfile.slug %}">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-arrow-down" title="download"></i>
+                                    </span>
+                                </a>
+                                {% endif %}
+                                {% if updownfile.is_password_protected %}
+                                    <span class="level-item">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-lock" title="password protected"></i>
+                                    </span>
+                                </span>
+                                {% endif %}
+                                {% if updownfile.has_expiry_date %}
+                                    <span class="level-item">
+                                    <span class="icon is-small {% if updownfile.is_expired %}has-text-danger{% endif %}">
+                                        <i class="fas fa-clock" title="expiry date: {{ updownfile.expires_at}}
+remaining downloads: {{ updownfile.remaining_downloads|default_if_none:"∞" }}"></i>
+                                    </span>
+                                </span>
+                                {% endif %}
+                                <a href="{% url "delete" updownfile.slug %}" class="level-item">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-trash-alt" title="delete"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        </nav>
+                    </div>
+                </article>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}

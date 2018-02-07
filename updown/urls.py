@@ -16,14 +16,17 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.auth.views import logout, login
 from django.urls import path
 
-from updown.views import UpdownFileListView, UpdownDeleteView, UserLoginView, UpdownView
+from updown.views import UpdownFileListView, UpdownDeleteView, UpdownView, UpdownFileListViewImpersonate
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login/', UserLoginView.as_view(), name='login'),
+    path('login/', login, {'template_name': 'admin/login.html'}, name='login'),
+    path('logout/', logout, {'next_page': '/'}, name='logout'),
     path('download/<slug:slug>', UpdownView.as_view(), name='download'),
     path('delete/<slug:slug>', UpdownDeleteView.as_view(), name='delete'),
-    path('manage/', UpdownFileListView.as_view(), name='manage'),
+    path('', UpdownFileListView.as_view(), name='list'),
+    path('impersonate/<int:owner_id>', UpdownFileListViewImpersonate.as_view(), name='list-impersonate'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

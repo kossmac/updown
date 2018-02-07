@@ -1,0 +1,26 @@
+{% extends "updown/base.html" %}
+
+{% block content %}
+
+<section class="section">
+    <div class="container">
+        <h1 class="title">
+            Password?
+        </h1>
+    </div>
+</section>
+<section class="section">
+    <div class="container">
+        <form method="post">
+            {% csrf_token %}
+            {% if not status == 410 %}
+                {{ form }}
+                <input type="submit" class="button" value="Submit" />
+                {% else %}
+                {{ form.non_field_errors }}
+            {% endif %}
+        </form>
+    </div>
+</section>
+
+{% endblock %}

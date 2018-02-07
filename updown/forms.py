@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ValidationError
 
-from myapp.models import UpdownFile
+from .models import UpdownFile
 
 
 class DownloadForm(forms.ModelForm):
@@ -56,8 +56,10 @@ class UploadForm(forms.ModelForm):
         model = UpdownFile
         fields = ('password', 'expires_at', 'file', 'max_downloads')
         widgets = {
-            'password': forms.PasswordInput(attrs={'class': 'input'}),
-            'expires_at': forms.DateInput(attrs={'id': 'datepicker', 'class': 'input'}),
+            'password': forms.PasswordInput(attrs={'class': 'input', 'placeholder': 'Password (optional)'}),
+            'expires_at': forms.DateInput(
+                attrs={'id': 'datepicker', 'class': 'input', 'placeholder': 'Expire date (optional)'}
+            ),
         }
 
 
@@ -66,6 +68,8 @@ class AdminUploadForm(forms.ModelForm):
         model = UpdownFile
         fields = ('password', 'expires_at', 'file', 'owner', 'max_downloads')
         widgets = {
-            'password': forms.PasswordInput(attrs={'class': 'input'}),
-            'expires_at': forms.DateInput(attrs={'id': 'datepicker', 'class': 'input'}),
+            'password': forms.PasswordInput(attrs={'class': 'input', 'placeholder': 'Password (optional)'}),
+            'expires_at': forms.DateInput(
+                attrs={'id': 'datepicker', 'class': 'input', 'placeholder': 'Expire date (optional)'}
+            ),
         }

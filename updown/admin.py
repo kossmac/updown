@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from myapp.models import UpdownFile
+from .models import UpdownFile
 
 
 @admin.register(UpdownFile)

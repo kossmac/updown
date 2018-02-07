@@ -40,6 +40,10 @@ class UpdownFile(models.Model):
         return self.remaining_downloads == 0
 
     @property
+    def has_expiry_date(self):
+        return bool(self.expires_at)
+
+    @property
     def is_password_protected(self):
         return bool(self.password)
 

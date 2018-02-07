@@ -1,20 +1,21 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
-from django.http import FileResponse
+from django.http import FileResponse, Http404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import DeleteView, UpdateView, CreateView
 
-from myapp.forms import DownloadForm, UploadForm, AdminUploadForm
-from myapp.models import UpdownFile
+from .forms import DownloadForm, UploadForm, AdminUploadForm
+from .models import UpdownFile
 
 
 @method_decorator(transaction.atomic, 'dispatch')
-class UpdownView(UpdateView):
+class UpdownView(LoginRequiredMixin, UpdateView):
     model = UpdownFile
     form_class = DownloadForm
-    template_name = 'myapp/updownfile_form.html'
+    template_name = 'updown/updownfile_form.html'
 
     def get_queryset(self, **kwargs):
         return super(UpdownView, self).get_queryset().select_for_update(**kwargs)
@@ -48,8 +49,8 @@ class UpdownView(UpdateView):
 class UpdownFileListView(LoginRequiredMixin, CreateView):
 
     model = UpdownFile
-    success_url = reverse_lazy('manage')
-    template_name = 'myapp/updownfile_list.html'
+    success_url = reverse_lazy('list')
+    template_name = 'updown/updownfile_list.html'
 
     def get_initial(self):
         initial = super(UpdownFileListView, self).get_initial()
@@ -82,14 +83,32 @@ class UpdownFileListView(LoginRequiredMixin, CreateView):
         return super(UpdownFileListView, self).form_valid(form)
 
     def get_context_data(self, **kwargs):
-        return super(UpdownFileListView, self).get_context_data(updownfile_list=self.get_fileset(), **kwargs)
+        return super(UpdownFileListView, self).get_context_data(
+            updownfile_list=self.get_fileset(),
+            pipi='toll',
+            **kwargs
+        )
 
 
-class UpdownDeleteView(DeleteView):
+class UpdownFileListViewImpersonate(UpdownFileListView):
+
+    def get_fileset(self):
+        user = self.request.user
+        try:
+            owner = User.objects.get(pk=self.kwargs.get('owner_id'))
+        except ObjectDoesNotExist:
+            raise Http404
+
+        if user.is_authenticated and user.is_superuser:
+            return super(UpdownFileListViewImpersonate, self).get_queryset().filter(owner=owner)
+        else:
+            return None
+
+
+class UpdownDeleteView(LoginRequiredMixin, DeleteView):
 
     model = UpdownFile
-    success_url = reverse_lazy('manage')
+    success_url = reverse_lazy('list')
 
-
-class UserLoginView(LoginView):
-    template_name = 'admin/login.html'
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)

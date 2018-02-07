@@ -1,0 +1,53 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UpDown</title>
+    <link rel="stylesheet" href="{% static "css/bulma.css" %}">
+    <link rel="stylesheet" href="{% static "css/bulma-calendar.css" %}">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.0/js/all.js"></script>
+    <script defer src="{% static "js/script.js" %}"></script>
+    <script defer src="{% static "js/datepicker.js" %}"></script>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="{% url "list" %}">
+            Manage
+        </a>
+        <a class="navbar-item" href="{% url "logout" %}">
+            Logout
+        </a>
+
+        {% if user.is_superuser and form.fields.owner %}
+            <div class="navbar-item">
+                <select id="impersonate_select">
+                    {% for id, owner in form.fields.owner.choices %}
+                        <option value="{{ id }}">{{ owner }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        {% endif %}
+    </div>
+</nav>
+
+{% block content %}
+{% endblock %}
+
+<footer class="footer">
+    <div class="container">
+        <div class="content has-text-centered">
+            <p>
+                <strong>UpDown</strong> by Karsten Kosmala. The source code is licensed
+                <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
+                is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
+            </p>
+        </div>
+    </div>
+</footer>
+</body>
+</html>
