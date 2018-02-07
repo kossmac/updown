@@ -25,6 +25,7 @@
 
         {% if user.is_superuser and form.fields.owner %}
             <div class="navbar-item">
+                Impersonate as:&nbsp;
                 <select id="impersonate_select">
                     {% for id, owner in form.fields.owner.choices %}
                         <option value="{{ id }}">{{ owner }}</option>

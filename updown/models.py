@@ -11,7 +11,7 @@ class UpdownFile(models.Model):
     file = models.FileField(verbose_name='Uploaded file', upload_to=settings.UPLOAD_STORAGE)
     slug = models.CharField(max_length=36, verbose_name='Secret URL Part')
     password = models.CharField(max_length=255, verbose_name='Password', blank=True)
-    max_downloads = models.PositiveSmallIntegerField(verbose_name='Maximum download Count', blank=True, null=True)
+    max_downloads = models.PositiveSmallIntegerField(verbose_name='Maximum downloads', blank=True, null=True)
     download_counter = models.PositiveIntegerField(verbose_name='Download counter', default=0, null=True, blank=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     expires_at = models.DateField(verbose_name='Expiration date', blank=True, null=True)

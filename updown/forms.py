@@ -56,7 +56,8 @@ class UploadForm(forms.ModelForm):
         model = UpdownFile
         fields = ('password', 'expires_at', 'file', 'max_downloads')
         widgets = {
-            'password': forms.PasswordInput(attrs={'class': 'input', 'placeholder': 'Password (optional)'}),
+            'password': forms.PasswordInput(attrs={'class': 'input is-rounded', 'placeholder': 'Password (optional)'}),
+            'file': forms.FileInput(attrs={'class': 'file-input'}),
             'expires_at': forms.DateInput(
                 attrs={'id': 'datepicker', 'class': 'input', 'placeholder': 'Expire date (optional)'}
             ),
@@ -68,8 +69,10 @@ class AdminUploadForm(forms.ModelForm):
         model = UpdownFile
         fields = ('password', 'expires_at', 'file', 'owner', 'max_downloads')
         widgets = {
-            'password': forms.PasswordInput(attrs={'class': 'input', 'placeholder': 'Password (optional)'}),
+            'password': forms.PasswordInput(attrs={'class': 'input is-rounded', 'placeholder': 'Password (optional)'}),
+            'file': forms.FileInput(attrs={'class': 'file-input'}),
+            'max_downloads': forms.NumberInput(attrs={'class': 'is-rounded', 'placeholder': '∞'}),
             'expires_at': forms.DateInput(
-                attrs={'id': 'datepicker', 'class': 'input', 'placeholder': 'Expire date (optional)'}
+                attrs={'id': 'datepicker', 'class': 'input is-rounded', 'placeholder': 'Expire date (optional)'}
             ),
         }

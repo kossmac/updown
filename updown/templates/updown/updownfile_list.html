@@ -19,13 +19,19 @@
             <div class="column is-half is-offset-one-quarter">
                 <form action="{% url 'list' %}" method="post" enctype="multipart/form-data">
                     <div class="field">
-                        <div class="control">
+                        <div class="control has-icons-left">
                             {{ form.password }}
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-lock"></i>
+                            </span>
                         </div>
                     </div>
                     <div class="field">
-                        <div class="control">
+                        <div class="control has-icons-left">
                             {{ form.expires_at }}
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-calendar-alt"></i>
+                            </span>
                         </div>
                     </div>
                     <div class="field">
@@ -48,7 +54,7 @@
                             </div>
                         </div>
                     {% endif %}
-                    <div class="file is-boxed">
+                    <div class="file field">
                         <label class="file-label">
                             {{ form.file }}
                             <span class="file-cta">

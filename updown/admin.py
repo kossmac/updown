@@ -45,9 +45,20 @@ class UpdownFileAdmin(admin.ModelAdmin):
 
     is_expired.short_description = 'is expired'
     is_expired.boolean = True
+    is_expired.empty_value_display = 'never'
 
     def is_password_protected(self, obj):
         return obj.is_password_protected
 
     is_password_protected.short_description = 'is protected'
     is_password_protected.boolean = True
+
+    def remaining_downloads(self, obj):
+        return obj.remaining_downloads
+
+    remaining_downloads.empty_value_display = '∞'
+
+    def max_downloads(self, obj):
+        return obj.max_downloads
+
+    max_downloads.empty_value_display = '∞'
