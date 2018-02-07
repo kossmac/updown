@@ -23,15 +23,26 @@
                                     <i class="fas fa-lock"></i>
                                 </span>
                             </div>
-                            <div class="control has-icons-left">
+                            <div class="control has-icons-left has-icons-right">
                                 {{ form.expires_at }}
                                 <span class="icon is-small is-left">
                                     <i class="fas fa-calendar-alt"></i>
                                 </span>
+                                {% if form.errors.expires_at %}
+                                    <span class="icon is-small is-right">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </span>
+                                {% endif %}
                             </div>
-                            <div class="control">
+                            <div class="control has-icons-left has-icons-right">
                                 {{ form.max_downloads }}
                             </div>
+
+                            {% if form.errors.max_downloads %}
+                                <span class="icon is-small is-right">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </span>
+                            {% endif %}
                         </div>
                         {% if user.is_superuser %}
                             <div class="field">

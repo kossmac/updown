@@ -2,7 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
-from django.http import FileResponse, Http404, HttpResponseForbidden
+from django.http import FileResponse, Http404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import DeleteView, UpdateView, CreateView
@@ -57,7 +57,7 @@ class UpdownView(UpdateView):
     def file_response(obj: UpdownFile):
         # takes an UpdownFile object and returns a http file response of it
         response = FileResponse(obj.file)
-        response['Content-Disposition'] = 'attachment; filename="%s"' % obj.file.name
+        response['Content-Disposition'] = 'attachment; filename="%s"' % obj
 
         return response
 

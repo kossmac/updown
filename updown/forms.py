@@ -15,7 +15,7 @@ UPLOAD_FORM_WIDGETS = {
         }
     ),
     'expires_at': forms.DateInput(
-        attrs={'id': 'datepicker', 'class': 'input is-rounded', 'placeholder': 'Expire date (optional)'}
+        attrs={'id': 'datepicker', 'class': 'input is-rounded', 'placeholder': 'Expiration date (optional)'}
     ),
 }
 

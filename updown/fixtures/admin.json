@@ -34,23 +34,5 @@
       "groups": [],
       "user_permissions": []
     }
-  },
-  {
-    "model": "auth.user",
-    "pk": 3,
-    "fields": {
-      "password": "pbkdf2_sha256$100000$vJeQVLZVzprw$9Pyhq12ta7hz/WXV5WMRrW10E3xQhqSCdneJF4BKIH8=",
-      "last_login": "2018-01-01T19:06:18.024Z",
-      "is_superuser": false,
-      "username": "kkos",
-      "first_name": "",
-      "last_name": "",
-      "email": "",
-      "is_staff": false,
-      "is_active": true,
-      "date_joined": "2018-01-01T19:05:38.327Z",
-      "groups": [],
-      "user_permissions": []
-    }
   }
 ]

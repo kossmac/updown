@@ -1,10 +1,11 @@
-import uuid
 import datetime
-
 import os
+import uuid
+
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator
 from django.db import models
 
 
@@ -12,7 +13,12 @@ class UpdownFile(models.Model):
     file = models.FileField(verbose_name='Uploaded file', upload_to=settings.UPLOAD_STORAGE)
     slug = models.CharField(max_length=36, verbose_name='Secret URL Part')
     password = models.CharField(max_length=255, verbose_name='Password', blank=True)
-    max_downloads = models.PositiveSmallIntegerField(verbose_name='Maximum downloads', blank=True, null=True)
+    max_downloads = models.PositiveSmallIntegerField(
+        verbose_name='Maximum downloads',
+        validators=[MinValueValidator(1)],
+        blank=True,
+        null=True
+    )
     download_counter = models.PositiveIntegerField(verbose_name='Download counter', default=0, null=True, blank=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     expires_at = models.DateField(verbose_name='Expiration date', blank=True, null=True)
@@ -45,7 +51,7 @@ class UpdownFile(models.Model):
 
     @property
     def can_expire(self):
-        return any([bool(self.expires_at), bool(self.max_downloads)])
+        return self.max_downloads or bool(self.expires_at)
 
     @property
     def is_password_protected(self):
