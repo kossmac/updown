@@ -40,7 +40,7 @@ class DownloadForm(forms.ModelForm):
         if self.instance.is_expired:
             raise ValidationError(
                 message='File %(name)s is expired.',
-                params=dict(name=self.instance.file.name),
+                params=dict(name=self.instance),
                 code='expired',
             )
 

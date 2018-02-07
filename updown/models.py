@@ -38,7 +38,7 @@ class UpdownFile(models.Model):
         if self.expires_at and self.expires_at < datetime.date.today():
             return True
 
-        if self.max_downloads:
+        if self.max_downloads is not None:
             return bool(self.remaining_downloads <= 0)
 
         return False
@@ -53,5 +53,5 @@ class UpdownFile(models.Model):
 
     @property
     def remaining_downloads(self):
-        if self.max_downloads:
+        if self.max_downloads is not None:
             return self.max_downloads - self.download_counter

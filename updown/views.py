@@ -18,7 +18,7 @@ That will prevent multiple update queries in different requests (select_for_upda
 
 
 @method_decorator(transaction.atomic, 'dispatch')
-class UpdownView(LoginRequiredMixin, UpdateView):
+class UpdownView(UpdateView):
     # We want to operate on a specific model
     model = UpdownFile
     # We want to use a specific custom form
