@@ -22,11 +22,11 @@ from django.urls import path
 from updown.views import UpdownFileListView, UpdownDeleteView, UpdownView, UpdownFileListViewImpersonate
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('login/', login, {'template_name': 'admin/login.html'}, name='login'),
-    path('logout/', logout, {'next_page': '/'}, name='logout'),
-    path('download/<slug:slug>', UpdownView.as_view(), name='download'),
-    path('delete/<slug:slug>', UpdownDeleteView.as_view(), name='delete'),
-    path('', UpdownFileListView.as_view(), name='list'),
-    path('impersonate/<int:owner_id>', UpdownFileListViewImpersonate.as_view(), name='list-impersonate'),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+                  path('admin/', admin.site.urls),
+                  path('login/', login, {'template_name': 'admin/login.html'}, name='login'),
+                  path('logout/', logout, {'next_page': '/'}, name='logout'),
+                  path('download/<slug:slug>', UpdownView.as_view(), name='download'),
+                  path('delete/<slug:slug>', UpdownDeleteView.as_view(), name='delete'),
+                  path('', UpdownFileListView.as_view(), name='list'),
+                  path('impersonate/<int:owner_id>', UpdownFileListViewImpersonate.as_view(), name='list-impersonate'),
+              ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

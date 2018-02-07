@@ -41,13 +41,12 @@ class UpdownView(LoginRequiredMixin, UpdateView):
     @staticmethod
     def file_response(obj: UpdownFile):
         response = FileResponse(obj.file)
-        response['Content-Disposition'] = 'attachment; filename="%s"' % obj.file.name
+        response['Content-Disposition'] = 'attachment; filename="%s"' % str(obj.file)
 
         return response
 
 
 class UpdownFileListView(LoginRequiredMixin, CreateView):
-
     model = UpdownFile
     success_url = reverse_lazy('list')
     template_name = 'updown/updownfile_list.html'
@@ -65,7 +64,7 @@ class UpdownFileListView(LoginRequiredMixin, CreateView):
             return AdminUploadForm
 
         return UploadForm
-    
+
     def get_fileset(self):
         if self.request.user.is_authenticated:
             return super(UpdownFileListView, self).get_queryset().filter(owner=self.request.user)
@@ -106,7 +105,6 @@ class UpdownFileListViewImpersonate(UpdownFileListView):
 
 
 class UpdownDeleteView(LoginRequiredMixin, DeleteView):
-
     model = UpdownFile
     success_url = reverse_lazy('list')
 

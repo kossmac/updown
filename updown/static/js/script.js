@@ -1,9 +1,9 @@
-document.addEventListener( 'DOMContentLoaded', function () {
-    var datePicker = new DatePicker( document.getElementById( 'datepicker' ), {
+document.addEventListener('DOMContentLoaded', function () {
+    var datePicker = new DatePicker(document.getElementById('datepicker'), {
         lang: 'de',
         startDate: new Date(),
         dataFormat: 'yyyy-mm-dd'
-    } );
+    });
 
     // Get all "navbar-burger" elements
     var $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
@@ -27,8 +27,8 @@ document.addEventListener( 'DOMContentLoaded', function () {
         });
     }
 
-    var impersonate_select = document.getElementById( 'impersonate_select' );
+    var impersonate_select = document.getElementById('impersonate_select');
     impersonate_select.onchange = function (ev) {
         window.open(window.location.origin + '/impersonate/' + this.selectedOptions["0"].value, '_self');
     }
-} );
+});

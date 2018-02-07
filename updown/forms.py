@@ -4,6 +4,21 @@ from django.core.exceptions import ValidationError
 
 from .models import UpdownFile
 
+UPLOAD_FORM_WIDGETS = {
+    'password': forms.PasswordInput(attrs={'class': 'input is-rounded', 'placeholder': 'Password (optional)'}),
+    'file': forms.FileInput(attrs={'class': 'file-input'}),
+    'max_downloads': forms.NumberInput(
+        attrs={
+            'class': 'is-rounded',
+            'placeholder': 'Max Dloads: ∞ (optional)',
+            'style': 'height: 2.25em;border-radius: 20px;border: 1px solid transparent;border-color:  #dbdbdb;font-size:  1rem;padding-top:  calc(0.375em - 1px);padding-bottom:  calc(0.375em - 1px);padding-left: 1.25em;box-shadow: inset 0 1px 2px rgba(10, 10, 10, 0.1)',
+        }
+    ),
+    'expires_at': forms.DateInput(
+        attrs={'id': 'datepicker', 'class': 'input is-rounded', 'placeholder': 'Expire date (optional)'}
+    ),
+}
+
 
 class DownloadForm(forms.ModelForm):
     class Meta:
@@ -55,24 +70,11 @@ class UploadForm(forms.ModelForm):
     class Meta:
         model = UpdownFile
         fields = ('password', 'expires_at', 'file', 'max_downloads')
-        widgets = {
-            'password': forms.PasswordInput(attrs={'class': 'input is-rounded', 'placeholder': 'Password (optional)'}),
-            'file': forms.FileInput(attrs={'class': 'file-input'}),
-            'expires_at': forms.DateInput(
-                attrs={'id': 'datepicker', 'class': 'input', 'placeholder': 'Expire date (optional)'}
-            ),
-        }
+        widgets = UPLOAD_FORM_WIDGETS
 
 
 class AdminUploadForm(forms.ModelForm):
     class Meta:
         model = UpdownFile
-        fields = ('password', 'expires_at', 'file', 'owner', 'max_downloads')
-        widgets = {
-            'password': forms.PasswordInput(attrs={'class': 'input is-rounded', 'placeholder': 'Password (optional)'}),
-            'file': forms.FileInput(attrs={'class': 'file-input'}),
-            'max_downloads': forms.NumberInput(attrs={'class': 'is-rounded', 'placeholder': '∞'}),
-            'expires_at': forms.DateInput(
-                attrs={'id': 'datepicker', 'class': 'input is-rounded', 'placeholder': 'Expire date (optional)'}
-            ),
-        }
+        fields = UploadForm.Meta.fields + ('owner',)
+        widgets = UPLOAD_FORM_WIDGETS

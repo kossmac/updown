@@ -1,26 +1,37 @@
 {% extends "updown/base.html" %}
 
 {% block content %}
-
-<section class="section">
-    <div class="container">
-        <h1 class="title">
-            Password?
-        </h1>
-    </div>
-</section>
-<section class="section">
-    <div class="container">
-        <form method="post">
-            {% csrf_token %}
-            {% if not status == 410 %}
-                {{ form }}
-                <input type="submit" class="button" value="Submit" />
-                {% else %}
-                {{ form.non_field_errors }}
-            {% endif %}
-        </form>
-    </div>
-</section>
-
+    <section class="section">
+        <div class="container">
+            <h1 class="title">
+                Password?
+            </h1>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-half is-offset-one-quarter">
+                    <div class="field is-grouped is-grouped-centered">
+                        <form method="post">
+                            {% csrf_token %}
+                            {% if not status == 410 %}
+                                <div class="field">
+                                    <div class="control has-icons-left">
+                                        {{ form.password }}
+                                        <span class="icon is-small is-left">
+                                            <i class="fas fa-lock"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <input type="submit" class="button" value="Submit"/>
+                            {% else %}
+                                {{ form.non_field_errors }}
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}

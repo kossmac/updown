@@ -1,6 +1,7 @@
 import uuid
 import datetime
 
+import os
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
@@ -18,7 +19,7 @@ class UpdownFile(models.Model):
     created_at = models.DateTimeField(verbose_name='Creation date', auto_now_add=True)
 
     def __str__(self):
-        return self.file.name
+        return os.path.basename(self.file.name)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -37,11 +38,12 @@ class UpdownFile(models.Model):
         if self.expires_at and self.expires_at < datetime.date.today():
             return True
 
-        return self.remaining_downloads == 0
+        if self.max_downloads:
+            return self.remaining_downloads <= 0
 
     @property
-    def has_expiry_date(self):
-        return bool(self.expires_at)
+    def can_expire(self):
+        return any([bool(self.expires_at), bool(self.max_downloads)])
 
     @property
     def is_password_protected(self):

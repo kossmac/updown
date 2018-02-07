@@ -38,6 +38,7 @@ class UpdownFileAdmin(admin.ModelAdmin):
 
     def filename(self, obj):
         return str(obj)
+
     filename.short_description = 'filename'
 
     def is_expired(self, obj):
