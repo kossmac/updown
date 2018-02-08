@@ -5,14 +5,13 @@ from django.core.exceptions import ValidationError
 
 from .models import UpdownFile
 
-
 UPLOAD_FORM_WIDGETS = {
     'password': forms.PasswordInput(attrs={'class': 'input is-rounded', 'placeholder': 'secret'}),
     'file': forms.FileInput(attrs={'class': 'file-input', 'id': 'file'}),
     'max_downloads': forms.NumberInput(
         attrs={
             'class': 'is-rounded',
-            'placeholder': '10',
+            'placeholder': 'unlimited',
             'style': 'width: 100%;height: 2.25em;border-radius: 20px;border: 1px solid transparent;border-color:  #dbdbdb;font-size:  1rem;padding-top:  calc(0.375em - 1px);padding-bottom:  calc(0.375em - 1px);padding-left: 1.25em;box-shadow: inset 0 1px 2px rgba(10, 10, 10, 0.1)',
         }
     ),

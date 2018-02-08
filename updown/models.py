@@ -9,15 +9,20 @@ from django.core.validators import MinValueValidator
 from django.db import models
 
 
+class RealPositiveSmallIntegerField(models.PositiveSmallIntegerField):
+    def formfield(self, **kwargs):
+        return super(RealPositiveSmallIntegerField, self).formfield(min_value=1, **kwargs)
+
+
 class UpdownFile(models.Model):
     file = models.FileField(verbose_name='File', upload_to=settings.UPLOAD_STORAGE)
     slug = models.CharField(max_length=36, verbose_name='Secret URL Part')
     password = models.CharField(max_length=255, verbose_name='Password', blank=True)
-    max_downloads = models.PositiveSmallIntegerField(
+    max_downloads = RealPositiveSmallIntegerField(
         verbose_name='Maximum downloads',
         validators=[MinValueValidator(1)],
         blank=True,
-        null=True
+        null=True,
     )
     download_counter = models.PositiveIntegerField(verbose_name='Download counter', default=0, null=True, blank=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
