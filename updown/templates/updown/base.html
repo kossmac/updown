@@ -10,30 +10,32 @@
     <link rel="stylesheet" href="{% static "css/bulma-calendar.css" %}">
     <script defer src="https://use.fontawesome.com/releases/v5.0.0/js/all.js"></script>
     <script defer src="{% static "js/script.js" %}"></script>
-    <script defer src="{% static "js/datepicker.js" %}"></script>
 </head>
 <body>
 
 {% if user.is_authenticated %}
-<nav class="navbar" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-        <a class="navbar-item" href="{% url "list" %}">
-            Manage
-        </a>
+<nav class="navbar is-light" role="navigation" aria-label="main navigation">
+    <div class="navbar-menu">
+        <div class="navbar-start">
+            <a class="navbar-item" href="{% url "list" %}">
+                Manage
+            </a>
+            {% if user.is_superuser and form.fields.owner %}
+                <div class="navbar-item">
+                    Work as:&nbsp;
+                    <select id="impersonate_select">
+                        {% for id, owner in form.fields.owner.choices %}
+                            <option value="{{ id }}">{{ owner }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endif %}
+        </div>
+        <div class="navbar-end">
         <a class="navbar-item" href="{% url "logout" %}">
             Logout ({{ user }})
         </a>
-
-        {% if user.is_superuser and form.fields.owner %}
-            <div class="navbar-item">
-                Impersonate as:&nbsp;
-                <select id="impersonate_select">
-                    {% for id, owner in form.fields.owner.choices %}
-                        <option value="{{ id }}">{{ owner }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        {% endif %}
+        </div>
     </div>
 </nav>
 {% endif %}

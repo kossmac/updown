@@ -10,7 +10,7 @@ from django.db import models
 
 
 class UpdownFile(models.Model):
-    file = models.FileField(verbose_name='Uploaded file', upload_to=settings.UPLOAD_STORAGE)
+    file = models.FileField(verbose_name='File', upload_to=settings.UPLOAD_STORAGE)
     slug = models.CharField(max_length=36, verbose_name='Secret URL Part')
     password = models.CharField(max_length=255, verbose_name='Password', blank=True)
     max_downloads = models.PositiveSmallIntegerField(

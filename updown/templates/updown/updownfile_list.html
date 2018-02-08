@@ -3,79 +3,130 @@
 {% block content %}
     <section class="section">
         <div class="container">
-            <h1 class="title">
-                Manage files
-            </h1>
-        </div>
-    </section>
-    <section class="section">
-        <div class="container">
             <h2 class="subtitle is-3">
                 Upload
             </h2>
-            <div class="columns is-centered">
-                <div class="column is-narrow">
+            <div class="columns">
+                <div class="column">
                     <form action="{% url 'list' %}" method="post" enctype="multipart/form-data">
-                        <div class="field is-grouped is-grouped-multiline">
-                            <div class="control has-icons-left">
-                                {{ form.password }}
-                                <span class="icon is-small is-left">
+
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                                <label class="label"> {{ form.file.label }}</label>
+                            </div>
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="file has-name">
+                                        <div class="control">
+                                            <label class="file-label">
+                                                {{ form.file }}
+                                                <span class="file-cta">
+                                    <span class="file-icon">
+                                        <i class="fas fa-upload"></i>
+                                    </span>
+                                    <span class="file-label">
+                                        Choose a file…
+                                    </span>
+                                </span>
+                                                <span class="file-name" id="filename"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                                <label class="label"> {{ form.password.label }}</label>
+                            </div>
+                            <div class="field-body">
+                                <div class="field is-narrow">
+                                    <p class="control is-expanded has-icons-left">
+                                        {{ form.password }}
+                                        <span class="icon is-small is-left">
                                     <i class="fas fa-lock"></i>
                                 </span>
+                                    </p>
+                                    <p class="help">Protect your file with an optional password</p>
+                                </div>
                             </div>
-                            <div class="control has-icons-left has-icons-right">
-                                {{ form.expires_at }}
-                                <span class="icon is-small is-left">
-                                    <i class="fas fa-calendar-alt"></i>
-                                </span>
-                                {% if form.errors.expires_at %}
-                                    <span class="icon is-small is-right">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                    </span>
-                                {% endif %}
-                            </div>
-                            <div class="control has-icons-left has-icons-right">
-                                {{ form.max_downloads }}
-                            </div>
+                        </div>
 
-                            {% if form.errors.max_downloads %}
-                                <span class="icon is-small is-right">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                    </span>
-                            {% endif %}
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                                <label class="label"> {{ form.expires_at.label }}</label>
+                            </div>
+                            <div class="field-body">
+                                <div class="field is-narrow">
+                                    <p class="control is-expanded has-icons-left has-icons-right">
+                                        {{ form.expires_at }}
+                                        <span class="icon is-small is-left">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </span>
+                                        <p class="help">Set an optional expiration date</p>
+                                        {% if form.errors.expires_at %}
+                                            <span class="icon is-small is-right">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                            </span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                                <label class="label"> {{ form.max_downloads.label }}</label>
+                            </div>
+                            <div class="field-body">
+                                <div class="field is-narrow">
+                                    <p class="control has-icons-left has-icons-right">
+                                        {{ form.max_downloads }}
+                                    </p>
+                                    <p class="help">Restrict number of downloads</p>
+                                    {% if form.errors.max_downloads %}
+                                        <span class="is-small">
+                                            {{ form.errors.max_downloads.0 }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
                         {% if user.is_superuser %}
-                            <div class="field">
-                                <label class="label">{{ form.owner.label }}</label>
-                                <div class="control">
-                                    <div class="select">
-                                        <select required name="{{ form.owner.name }}"
-                                                id="{{ form.owner.id_for_label }}">
-                                            {% for id, owner in form.fields.owner.choices %}
-                                                <option value="{{ id }}" {% if id == form.owner.initial %}
-                                                        selected {% endif %}>{{ owner }}</option>
-                                            {% endfor %}
-                                        </select>
+                            <div class="field is-horizontal">
+                                <div class="field-label is-normal">
+                                    <label class="label">{{ form.owner.label }}</label>
+                                </div>
+                                <div class="field-body">
+                                    <div class="field is-narrow">
+                                        <div class="control">
+                                            <div class="select is-fullwidth">
+                                                <select required name="{{ form.owner.name }}"
+                                                        id="{{ form.owner.id_for_label }}">
+                                                    {% for id, owner in form.fields.owner.choices %}
+                                                        <option value="{{ id }}" {% if id == form.owner.initial %}
+                                                                selected {% endif %}>{{ owner }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         {% endif %}
-                        <div class="file field is-grouped is-grouped-centered">
-                            <div class="control">
-                                <label class="file-label">
-                                    {{ form.file }}
-                                    <span class="file-cta">
-                                        <span class="file-icon">
-                                        <i class="fas fa-upload"></i>
-                                        </span>
-                                        <span class="file-label">
-                                        Choose a file…
-                                        </span>
-                                    </span>
-                                </label>
+
+
+                        <div class="field is-horizontal">
+                            <div class="field-label">
+                                <!-- Left empty for spacing -->
                             </div>
-                            <div class="control">
-                                <input type="submit" class="button is-link" value="Submit"/>
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="control">
+                                        <input type="submit" class="button is-link" value="Submit"/>
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         {% csrf_token %}

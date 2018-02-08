@@ -1,21 +1,27 @@
+import datetime
 from django import forms
 from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ValidationError
 
 from .models import UpdownFile
 
+
 UPLOAD_FORM_WIDGETS = {
-    'password': forms.PasswordInput(attrs={'class': 'input is-rounded', 'placeholder': 'Password (optional)'}),
-    'file': forms.FileInput(attrs={'class': 'file-input'}),
+    'password': forms.PasswordInput(attrs={'class': 'input is-rounded', 'placeholder': 'secret'}),
+    'file': forms.FileInput(attrs={'class': 'file-input', 'id': 'file'}),
     'max_downloads': forms.NumberInput(
         attrs={
             'class': 'is-rounded',
-            'placeholder': 'Max Dloads: ∞ (optional)',
-            'style': 'height: 2.25em;border-radius: 20px;border: 1px solid transparent;border-color:  #dbdbdb;font-size:  1rem;padding-top:  calc(0.375em - 1px);padding-bottom:  calc(0.375em - 1px);padding-left: 1.25em;box-shadow: inset 0 1px 2px rgba(10, 10, 10, 0.1)',
+            'placeholder': '10',
+            'style': 'width: 100%;height: 2.25em;border-radius: 20px;border: 1px solid transparent;border-color:  #dbdbdb;font-size:  1rem;padding-top:  calc(0.375em - 1px);padding-bottom:  calc(0.375em - 1px);padding-left: 1.25em;box-shadow: inset 0 1px 2px rgba(10, 10, 10, 0.1)',
         }
     ),
     'expires_at': forms.DateInput(
-        attrs={'id': 'datepicker', 'class': 'input is-rounded', 'placeholder': 'Expiration date (optional)'}
+        attrs={
+            'type': 'date',
+            'min': str(datetime.date.today()),
+            'style': 'width: 100%;height: 2.25em;border-radius: 20px;border: 1px solid transparent;border-color:  #dbdbdb;font-size:  1rem;padding-top:  calc(0.375em - 1px);padding-bottom:  calc(0.375em - 1px);padding-left: 2.25em;box-shadow: inset 0 1px 2px rgba(10, 10, 10, 0.1)',
+        }
     ),
 }
 
