@@ -4,7 +4,7 @@
     <section class="section">
         <div class="container">
             <h1 class="title">
-                Password?
+                This file is protected!
             </h1>
         </div>
     </section>
@@ -17,11 +17,19 @@
                             {% csrf_token %}
                             {% if not status == 410 %}
                                 <div class="field">
+                                    <label class="label"> {{ form.password.label }}</label>
                                     <div class="control has-icons-left">
                                         {{ form.password }}
                                         <span class="icon is-small is-left">
                                             <i class="fas fa-lock"></i>
                                         </span>
+                                        {% if form.errors.password %}
+                                            {% for error_key, error_value in form.errors.items %}
+                                            <span class="is-small">
+                                                {{ error_value }}
+                                            </span>
+                                            {% endfor %}
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <input type="submit" class="button is-link" value="Submit"/>

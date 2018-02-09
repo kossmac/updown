@@ -44,7 +44,7 @@ class DownloadForm(forms.ModelForm):
         # produces non_field_error, since is_expired is a property not an attribute of model
         if self.instance.is_expired:
             raise ValidationError(
-                message='File %(name)s is expired.',
+                message='File %(name)s has expired.',
                 params=dict(name=self.instance),
                 code='expired',
             )

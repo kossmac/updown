@@ -15,8 +15,8 @@ class RealPositiveSmallIntegerField(models.PositiveSmallIntegerField):
 
 
 class UpdownFile(models.Model):
-    file = models.FileField(verbose_name='File', upload_to=settings.UPLOAD_STORAGE)
-    slug = models.CharField(max_length=36, verbose_name='Secret URL Part')
+    file = models.FileField(verbose_name='File', upload_to=settings.UPLOAD_STORAGE, null=False)
+    slug = models.CharField(max_length=36, verbose_name='Secret URL Part', unique=True, null=False)
     password = models.CharField(max_length=255, verbose_name='Password', blank=True)
     max_downloads = RealPositiveSmallIntegerField(
         verbose_name='Maximum downloads',
@@ -25,7 +25,7 @@ class UpdownFile(models.Model):
         null=True,
     )
     download_counter = models.PositiveIntegerField(verbose_name='Download counter', default=0, null=True, blank=True)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
     expires_at = models.DateField(verbose_name='Expiration date', blank=True, null=True)
     created_at = models.DateTimeField(verbose_name='Creation date', auto_now_add=True)
 
@@ -35,7 +35,7 @@ class UpdownFile(models.Model):
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
 
-        # new file
+        # is object has no pk, its new -> generate an id, and hash optional password
         if not self.pk:
             self.slug = str(uuid.uuid4())
             if not self.password == '' and (not update_fields or 'password' in update_fields):
@@ -46,6 +46,12 @@ class UpdownFile(models.Model):
 
     @property
     def is_expired(self):
+        """
+        expired if:
+          (expiry date ist set and this date is in the past)
+          OR
+          (max_download is set and remaining downloads <= 0)
+        """
         if self.expires_at and self.expires_at < datetime.date.today():
             return True
 
@@ -56,6 +62,7 @@ class UpdownFile(models.Model):
 
     @property
     def can_expire(self):
+        # shall we show the clock?
         return self.max_downloads or bool(self.expires_at)
 
     @property

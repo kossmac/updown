@@ -1,5 +1,9 @@
 # UpDown
 
+## Requirements
+
+- python3, pip
+
 ## Installation
 
 1. Unzip package
@@ -29,3 +33,9 @@
 7. start django
 
     ``python manage.py runserver``
+
+## Users installed by fixtures
+
+- admin / adminadmin
+- admin2 / adminadmin
+- normaluser / adminadmin
